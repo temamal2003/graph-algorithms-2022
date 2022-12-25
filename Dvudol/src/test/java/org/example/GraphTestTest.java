@@ -13,35 +13,49 @@ public class GraphTestTest {
 
     @Test
     void MyTest1() throws FileNotFoundException {
-        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_1.txt"));
+        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_da1.txt"));
 
-        GraphDvudol GraphTest = new GraphDvudol();
+        dvudol.GraphDvudol GraphTest = new  dvudol.GraphDvudol();
         assertThat(GraphTest.execute(testGraph)).isEqualTo(true);
     }
 
     @Test
     void MyTest2() throws FileNotFoundException {
-        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_2.txt"));
+        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_da2.txt"));
 
-        GraphDvudol GraphTest = new GraphDvudol();
-        assertThat(GraphTest.execute(testGraph)).isEqualTo(false);
+        dvudol.GraphDvudol GraphTest = new  dvudol.GraphDvudol();
+        assertThat(GraphTest.execute(testGraph)).isEqualTo(true);
     }
 
     @Test
     void MyTest3() throws FileNotFoundException {
-        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_3.txt"));
+        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_da3.txt"));
 
-        GraphDvudol GraphTest = new GraphDvudol();
+        dvudol.GraphDvudol GraphTest = new dvudol.GraphDvudol();
         assertThat(GraphTest.execute(testGraph)).isEqualTo(true);
     }
 
     @Test
     void MyTest4() throws FileNotFoundException {
-        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_4.txt"));
+        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_net1.txt"));
 
-        GraphDvudol GraphTest = new GraphDvudol();
+        dvudol.GraphDvudol GraphTest = new  dvudol.GraphDvudol();
         assertThat(GraphTest.execute(testGraph)).isEqualTo(false);
     }
 
+    @Test
+    void MyTest5() throws FileNotFoundException {
+        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_net2.txt"));
 
+        dvudol.GraphDvudol GraphTest = new  dvudol.GraphDvudol();
+        assertThat(GraphTest.execute(testGraph)).isEqualTo(false);
+    }
+
+    @Test
+    void MyTest6() throws FileNotFoundException {
+        Graph testGraph = GraphFactory.loadGraphFromFile(new File("src/test/resources/graph_net3.txt"));
+
+        dvudol.GraphDvudol GraphTest = new  dvudol.GraphDvudol();
+        assertThat(GraphTest.execute(testGraph)).isEqualTo(false);
+    }
 }

@@ -1,9 +1,6 @@
-package org.example;
+package dvudol;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.mathsystem.api.graph.model.Edge;
 import com.mathsystem.api.graph.model.Graph;
@@ -14,61 +11,82 @@ import javax.swing.*;
 
 public class GraphDvudol implements GraphProperty {
 	private int vertexCount;
-	private int edgeCount;
-
 	private boolean TF;
-	private boolean[] used;
+
+	private boolean used[];
 
 	public boolean execute(Graph graph) {
 		vertexCount = graph.getVertexCount();
+		List<UUID> vertexes = graph.getVertices().keySet().stream().toList();// список вершин списком
+		used = new boolean[vertexCount];
+		boolean used1[];
+		used1 = new boolean[vertexCount];
 		int[] clrs = new int[vertexCount];
+		int[] carl = new int[vertexCount];
 		TF = true;
 		int c = 1;
-		used = new boolean[vertexCount];
+		int k = 0, p = 0;
 		Arrays.fill(used, false);
 
-		List<UUID> vertexes = graph.getVertices().keySet().stream().toList();// список вершин списком
 		for (int i = 0;i<vertexCount;i++)
 		{
 			clrs[i]= 0;
+			carl[i] = 0;
 		}
 
 		GraphAdjMatrix graphMatrix = new GraphAdjMatrix(graph);// граф заданный матрицой
-		DFS(graphMatrix, 0, -1, used); //проверка графа на связность
-		if (!isAllVisited(used))
-			return false;
+		used[0] = true;
+		check(graphMatrix);
+		while(k == 0)
+		{
+			for (int i = 0;i<vertexCount;i++)
+			{
+				used1[i] = used[i];
+			}
+			check(graphMatrix);
+			for (int i = 0;i<vertexCount;i++)
+			{
+				if(used1[i] == used[i])
+				{
+					p = p + 1;
+				}
+			}
+			if (p == vertexCount)
+			{
+				k = 1;
+			}
+			p = 0;
+		}
+
 		for (int i = 0;i<vertexCount;i++)
 		{
-			if (clrs[i] == 0)
+			if (used[i]== false)
 			{
-
-				clrs[i]= c;
-				coloring(i,graphMatrix,clrs, c);
+				TF = false;
 			}
 		}
 
-		for (int i = 0; i < vertexCount; i++) {
-			for (int j = 0; j < vertexCount; j++) {
-				if (graphMatrix.matrix[i][j] == 1 )
+
+		if (TF == true)
+		{
+			for (int i = 1;i <vertexCount;i++)
+			{
+				if (carl[i]== 0)
 				{
-					TF= false;
+					carl[i]= 1;
+					coralli(i,graphMatrix,carl);
+
 				}
 			}
 		}
+
+
 		return TF;
 
 	}
-	private boolean isAllVisited(boolean[] used) { // все ли вершины посещены
-		for (boolean use : used) {
-			if (!use)
-				return false; // Несвязный граф
-		}
-		return true;
-	}
-
-
 	public static class GraphAdjMatrix {
 		private final Integer[][] matrix;
+		private List<Integer> adjLists[];
 
 		public GraphAdjMatrix(Graph graph) {
 			int vertexCount = graph.getVertexCount();
@@ -76,60 +94,81 @@ public class GraphDvudol implements GraphProperty {
 			List<Edge> edges = graph.getEdges(); // список ребер
 			Map<UUID, Vertex> vertexMap = graph.getVertices();// список вершин
 			List<UUID> vertexes = vertexMap.keySet().stream().toList();// список вершин
+			adjLists = new LinkedList[vertexCount];
 			matrix = new Integer[vertexCount][vertexCount];
 			for (int row = 0; row < vertexCount; row++) {
 				for (int col = 0; col < vertexCount; col++) {
 					matrix[row][col] = 0;
 				}
 			}
+			for (int i = 0;i <vertexCount;i++)
+			{
+				adjLists[i] = new LinkedList<Integer>();
+			}
+
+
 			for (int edgeIndex = 0; edgeIndex < edgeCount; ++edgeIndex) {
 				Edge e = edges.get(edgeIndex);
 				UUID from = e.getFromV();
 				UUID to = e.getToV();
 				int fromIndex = vertexes.indexOf(from);
 				int toIndex = vertexes.indexOf(to);
+
+				add_edg(fromIndex,toIndex,adjLists);
+				add_edg(toIndex,fromIndex,adjLists);
+
 				matrix[fromIndex][toIndex] = 1;
 				matrix[toIndex][fromIndex] = 1;
 
 			}
-		}
 
-	}
-	public void coloring(int u, GraphAdjMatrix graphMatrix,int[] clrs, int c)
-	{
-		for(int i = 0;i<vertexCount;i++)
+
+
+		}
+		public void add_edg(int a, int b, List<Integer> adjLists[])
 		{
-			if (graphMatrix.matrix[u][i] == 1)
+			adjLists[a].add(b);
+		}
+
+
+
+	}
+	public void coralli(int u, GraphAdjMatrix graph, int[] carl)
+
+	{
+		for (int i = 0; i<graph.adjLists[u].size();i++)
+		{
+			int v = graph.adjLists[u].get(i);
+			if (carl[v] == 0 )
 			{
-				if (c == 1)
-				{
-					clrs[i] = 2;
-				}
-				else
-				{
-					clrs[i] = 1;
-				}
-				graphMatrix.matrix[u][i] = 3;
-				graphMatrix.matrix[i][u] = 3;
+				carl[v] = 3 - carl[u];
+				coralli(v,graph, carl);
+			}
+			else if (carl[u] == carl[v])
+			{
 
+				TF = false;
+			}
+		}
+	}
+	public void check(GraphAdjMatrix graphMatrix)
+	{
+		for (int i = 0;i<vertexCount;i++)
+		{
+			if (used[i] == true)
+			{
+				for (int j = 0;j<vertexCount;j++)
+				{
+					if (graphMatrix.matrix[i][j] == 1)
+					{
+						used[j] = true;
+					}
+				}
 			}
 
 		}
 
+
 	}
-	private void DFS(GraphAdjMatrix matrix, int v, int exc, boolean[] used) { //обход в глубину
-		used[v] = true;
-
-		if (v != exc) {
-			for (int j = 0; j < vertexCount; j++) {
-				if (matrix.matrix[v][j] != 0
-
-						&& !used[matrix.matrix[v][j]]) { //если путь существует, точка не "удалена" и не использована
-					DFS(matrix, matrix.matrix[j][v], exc, used);
-				}
-			}
-		}
-	}
-
 }
 
